@@ -1,0 +1,5 @@
+@recharge_key=
+
+GET https://api.rechargeapps.com/subscriptions?shopify_variant_id=
+Content-Type: application/json
+X-Recharge-Access-Token: {{recharge_key}}

@@ -1,6 +1,5 @@
 @recharge_key=
 
-GET https://api.rechargeapps.com/products?collection_id=
-Accept: application/json
+GET https://api.rechargeapps.com/products?collection_id=280215
 Content-Type: application/json
 X-Recharge-Access-Token: {{recharge_key}}

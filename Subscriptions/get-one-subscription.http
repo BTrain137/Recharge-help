@@ -1,0 +1,8 @@
+@recharge_key=
+@customer_id=
+
+###
+GET https://api.rechargeapps.com/subscriptions?customer_id={{customer_id}}
+Accept: application/json
+Content-Type: application/json
+X-Recharge-Access-Token: {{recharge_key}}

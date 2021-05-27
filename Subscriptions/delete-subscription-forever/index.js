@@ -11,6 +11,9 @@ const recharge = new Recharge({
   secrete: RECHARGE_API_SECRETE,
 });
 
+// TODO: Replace with another product
+// TODO: Give discount on the replaced product
+
 findAndDeleteSubscription("17437248585779", recharge, true)
   .then((customers) => {
     console.log(JSON.stringify(customers));

@@ -26,7 +26,7 @@ const deleteManySubscriptions = async (list) => {
       const { id, status, email, product_title } = list[i];
       const result = await deleteOneSubscription(id);
       console.log({ email, status, product_title });
-      if (status !== "CANCELLED") {
+      if (status !== "CANCELLED" && status !== "EXPIRED") {
         customers.push({ email, status, product_title });
       }
     }

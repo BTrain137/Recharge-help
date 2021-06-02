@@ -1,0 +1,15 @@
+@address_id={{$dotenv ADDRESS_ID}}
+@next_charge_date=2021-06-10
+
+###
+POST https://api.rechargeapps.com/addresses/{{$dotenv ADDRESS_ID}}/onetimes
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+{
+  "next_charge_scheduled_at": "{{next_charge_date}}",
+  "price": 0,
+  "product_title": "IMMUNITY BOOST VITAMIN C (Pack of 12) - FREE Promo",
+  "quantity": 1,
+  "shopify_variant_id": 39291305656403
+}

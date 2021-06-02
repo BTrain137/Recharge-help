@@ -1,0 +1,19 @@
+@address_id={{$dotenv ADDRESS_ID}}
+@next_charge_date=2021-06-24
+
+###
+POST https://api.rechargeapps.com/subscriptions
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+{
+  "address_id": "{{address_id}}",
+  "charge_interval_frequency":"4",
+  "next_charge_scheduled_at":"{{next_charge_date}}",
+  "order_interval_frequency":"4",
+  "order_interval_unit":"week",
+  "product_title": "IMMUNITY BOOST VITAMIN C (Pack of 12) Auto renew",
+  "shopify_variant_id":39291305656403,
+  "shopify_product_id":6548725760083,
+  "quantity":2
+}

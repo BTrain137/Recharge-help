@@ -2,7 +2,11 @@ const dotenv = require("dotenv");
 const Recharge = require("recharge-api-node");
 const findAndDeleteSubscription = require("./controller");
 
-dotenv.config({ path: "./.env.vive-organic" });
+// dotenv.config({ path: "./.env.vive-organic" });
+dotenv.config({ path: "./.env.primal-blueprint" });
+// dotenv.config({ path: "./.env.primal-kitchen" });
+
+const variantId = 14176309084221;
 
 const { RECHARGE_API_KEY, RECHARGE_API_SECRETE } = process.env;
 
@@ -14,7 +18,7 @@ const recharge = new Recharge({
 // TODO: Replace with another product
 // TODO: Give discount on the replaced product
 
-findAndDeleteSubscription("17437248585779", recharge, true)
+findAndDeleteSubscription(variantId, recharge, true)
   .then((customers) => {
     console.log(JSON.stringify(customers));
     if (Array.isArray(customers)) {

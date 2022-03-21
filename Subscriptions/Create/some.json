@@ -1,0 +1,71 @@
+[
+  {
+    "properties": {
+      "_bundle": "Build A Box Subscription",
+      "_bundle_id": "1636486920109",
+      "_bundle_img": "https://cdn.shopify.com/s/files/1/1605/5587/collections/Big-Box-of-_Plant-Based_-Meat-VGB-Product-Shot--High-Res_95c60d97-3aa1-4110-9a8f-402f6d9634ad.png?v=1636077229",
+      "_bundle_item_index": "3",
+      "_bundle_item_titles": "Cajun Sausages, The Very Good Steak, BBQ Pulled Jackfruit, ",
+      "_bundle_price": "2697",
+      "_bundle_title": "Build A Box",
+      "_shopify_variant_id": "27063960971",
+      "charge_interval_frequency": "30",
+      "shipping_interval_frequency": "30",
+      "shipping_interval_unit_type": "day"
+    },
+    "shopify_variant_id": 27063960971,
+    "shipping_interval_frequency": "30",
+    "order_interval_frequency": "30",
+    "shipping_interval_unit_type": "day",
+    "order_interval_unit": "day",
+    "charge_interval_frequency": "30",
+    "next_charge_scheduled_at": "2021-12-09T00:00:00",
+    "quantity": 1
+  },
+  {
+    "properties": {
+      "_bundle": "Build A Box Subscription",
+      "_bundle_id": "1636486920109",
+      "_bundle_img": "https://cdn.shopify.com/s/files/1/1605/5587/collections/Big-Box-of-_Plant-Based_-Meat-VGB-Product-Shot--High-Res_95c60d97-3aa1-4110-9a8f-402f6d9634ad.png?v=1636077229",
+      "_bundle_item_index": "2",
+      "_bundle_item_titles": "Cajun Sausages, The Very Good Steak, BBQ Pulled Jackfruit, ",
+      "_bundle_price": "2697",
+      "_bundle_title": "Build A Box",
+      "_shopify_variant_id": "31387172143184",
+      "charge_interval_frequency": "30",
+      "shipping_interval_frequency": "30",
+      "shipping_interval_unit_type": "day"
+    },
+    "shopify_variant_id": 31387172143184,
+    "shipping_interval_frequency": "30",
+    "order_interval_frequency": "30",
+    "shipping_interval_unit_type": "day",
+    "order_interval_unit": "day",
+    "charge_interval_frequency": "30",
+    "next_charge_scheduled_at": "2021-12-09T00:00:00",
+    "quantity": 1
+  },
+  {
+    "properties": {
+      "_bundle": "Build A Box Subscription",
+      "_bundle_id": "1636486920109",
+      "_bundle_img": "https://cdn.shopify.com/s/files/1/1605/5587/collections/Big-Box-of-_Plant-Based_-Meat-VGB-Product-Shot--High-Res_95c60d97-3aa1-4110-9a8f-402f6d9634ad.png?v=1636077229",
+      "_bundle_item_index": "1",
+      "_bundle_item_titles": "Cajun Sausages, The Very Good Steak, BBQ Pulled Jackfruit, ",
+      "_bundle_price": "2697",
+      "_bundle_title": "Build A Box",
+      "_shopify_variant_id": "40433191616702",
+      "charge_interval_frequency": "30",
+      "shipping_interval_frequency": "30",
+      "shipping_interval_unit_type": "day"
+    },
+    "shopify_variant_id": 40433191616702,
+    "shipping_interval_frequency": "30",
+    "order_interval_frequency": "30",
+    "shipping_interval_unit_type": "day",
+    "order_interval_unit": "day",
+    "charge_interval_frequency": "30",
+    "next_charge_scheduled_at": "2021-12-09T00:00:00",
+    "quantity": 1
+  }
+]

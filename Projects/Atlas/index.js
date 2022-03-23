@@ -48,92 +48,113 @@ const main = async () => {
     const row = csvArr[i];
     const { subscription_id, customer_email, product_title } = row;
     const newProductId = +row["NEW Product ID"];
+    const newProductTitle = row["NEW Product Title"];
     const newQty = +row["NEW Quantity"];
     const newPrice = +row["NEW price"].replace("$", "");
 
     // console.log({ newProductId, newQty, newPrice, subscription_id });
 
-    try {
-      const product = await shopify.product.get(newProductId);
-      const { variants } = product;
-      const variantId = variants[0].id;
+    global.removeSubscription = true;
 
-      // console.log(product.id);
-      // console.log(variantId);
+    if (newProductId) {
+      try {
+        try {
+          const product = await shopify.product.get(newProductId);
+          const { variants } = product;
+          const variantId = variants[0].id;
+          global.variantId = variantId;
+        } catch (error) {
+          const products = await shopify.product.list({
+            title: newProductTitle,
+          });
+          if (products.length > 1) {
+            console.log(products);
+          }
+          const { variants } = products[0];
+          const variantId = variants[0].id;
+          global.variantId = variantId;
+        }
 
-      const subscription = await recharge.subscription.get(subscription_id);
-      // console.log(subscription);
+        // console.log(product.id);
+        console.log(global.variantId);
 
-      const {
-        address_id,
-        charge_interval_frequency,
-        next_charge_scheduled_at,
-        order_interval_frequency,
-        order_interval_unit,
-      } = subscription;
+        const subscription = await recharge.subscription.get(subscription_id);
+        // console.log(subscription);
 
-      // console.log({
-      //   address_id: +address_id,
-      //   charge_interval_frequency,
-      //   next_charge_scheduled_at,
-      //   order_interval_frequency,
-      //   order_interval_unit,
-      //   quantity: newQty,
-      //   shopify_variant_id: variantId,
-      //   price: newPrice,
-      // });
+        const {
+          address_id,
+          charge_interval_frequency,
+          next_charge_scheduled_at,
+          order_interval_frequency,
+          order_interval_unit,
+        } = subscription;
 
-      const endOfWeekDate = new Date("2022-03-28T00:00:00");
-      let nextChargeScheduledAt = new Date(next_charge_scheduled_at);
-      if (endOfWeekDate > nextChargeScheduledAt) {
-        nextChargeScheduledAt.setDate(nextChargeScheduledAt.getDate() + 7);
+        // console.log({
+        //   address_id: +address_id,
+        //   charge_interval_frequency,
+        //   next_charge_scheduled_at,
+        //   order_interval_frequency,
+        //   order_interval_unit,
+        //   quantity: newQty,
+        //   shopify_variant_id: variantId,
+        //   price: newPrice,
+        // });
+
+        const endOfWeekDate = new Date("2022-03-28T00:00:00");
+        let nextChargeScheduledAt = new Date(next_charge_scheduled_at);
+        if (endOfWeekDate > nextChargeScheduledAt) {
+          nextChargeScheduledAt.setDate(nextChargeScheduledAt.getDate() + 7);
+        }
+
+        nextChargeScheduledAt = `${nextChargeScheduledAt.getFullYear()}-${
+          nextChargeScheduledAt.getMonth() + 1
+        }-${nextChargeScheduledAt.getDate()}T00:00:00`;
+
+        // console.log(nextChargeScheduledAt);
+
+        const newSubscription = await recharge.subscription.create({
+          address_id: +address_id,
+          charge_interval_frequency,
+          next_charge_scheduled_at,
+          order_interval_frequency,
+          order_interval_unit,
+          quantity: newQty,
+          shopify_variant_id: variantId,
+          price: newPrice,
+        });
+
+        // console.log(newSubscription);
+        consoleColor(newSubscription.id, "===== Subscription Created ======");
+        consoleColor(
+          newSubscription.id,
+          `${customer_email} ${newSubscription.product_title}`
+        );
+        sleep();
+      } catch (error) {
+        console.log(`===============================`);
+        console.log("======== Add Subscription ==========");
+        console.log(`Row #${i}`, customer_email);
+        console.log(error);
+        console.log(`===============================`);
+        global.removeSubscription = false;
       }
-
-      nextChargeScheduledAt = `${nextChargeScheduledAt.getFullYear()}-${
-        nextChargeScheduledAt.getMonth() + 1
-      }-${nextChargeScheduledAt.getDate()}T00:00:00`;
-
-      // console.log(nextChargeScheduledAt);
-
-      const newSubscription = await recharge.subscription.create({
-        address_id: +address_id,
-        charge_interval_frequency,
-        next_charge_scheduled_at,
-        order_interval_frequency,
-        order_interval_unit,
-        quantity: newQty,
-        shopify_variant_id: variantId,
-        price: newPrice,
-      });
-
-      // console.log(newSubscription);
-      consoleColor(newSubscription.id, "===== Subscription Created ======");
-      consoleColor(
-        newSubscription.id,
-        `${customer_email} ${newSubscription.product_title}`
-      );
-      sleep();
-    } catch (error) {
-      console.log(`===============================`);
-      console.log("======== Add Subscription ==========");
-      console.log(`Row #${i}`, customer_email);
-      console.log(error);
-      console.log(`===============================`);
     }
 
-    try {
-      const result = await recharge.subscription.delete(subscription_id);
-      consoleColor(subscription_id, "===== Subscription Deleted ======");
-      consoleColor(subscription_id, `${customer_email} ${product_title}`);
-    } catch (error) {
-      console.log(`===============================`);
-      console.log("======== Remove Subscription ==========");
-      console.log(`Row #${i}`, customer_email);
-      console.log(error);
-      console.log(`===============================`);
+    if (global.removeSubscription) {
+      try {
+        const result = await recharge.subscription.delete(subscription_id);
+        consoleColor(subscription_id, "===== Subscription Deleted ======");
+        consoleColor(subscription_id, `${customer_email} ${product_title}`);
+      } catch (error) {
+        console.log(`===============================`);
+        console.log("======== Remove Subscription ==========");
+        console.log(`Row #${i}`, customer_email);
+        console.log(error);
+        console.log(`===============================`);
+      }
     }
 
-    console.log(`\n\n`);
+    console.log(`\n`);
   }
 };
 

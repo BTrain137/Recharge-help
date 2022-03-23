@@ -58,32 +58,63 @@ const main = async () => {
       const { variants } = product;
       const variantId = variants[0].id;
 
+      // console.log(product.id);
       // console.log(variantId);
 
       const subscription = await recharge.subscription.get(subscription_id);
+      // console.log(subscription);
+
       const {
-				address_id,
+        address_id,
         charge_interval_frequency,
-				next_charge_scheduled_at,
+        next_charge_scheduled_at,
         order_interval_frequency,
         order_interval_unit,
       } = subscription;
 
       // console.log({
+      //   address_id: +address_id,
       //   charge_interval_frequency,
+      //   next_charge_scheduled_at,
       //   order_interval_frequency,
       //   order_interval_unit,
-			// 	next_charge_scheduled_at,
-			// 	address_id,
+      //   quantity: newQty,
+      //   shopify_variant_id: variantId,
+      //   price: newPrice,
       // });
+
+      const endOfWeekDate = new Date("2022-03-28T00:00:00");
+      let nextChargeScheduledAt = new Date(next_charge_scheduled_at);
+      if (endOfWeekDate > nextChargeScheduledAt) {
+        nextChargeScheduledAt.setDate(nextChargeScheduledAt.getDate() + 7);
+      }
+
+      nextChargeScheduledAt = `${nextChargeScheduledAt.getFullYear()}-${
+        nextChargeScheduledAt.getMonth() + 1
+      }-${nextChargeScheduledAt.getDate()}T00:00:00`;
+
+      // console.log(nextChargeScheduledAt);
+
+      // const newSubscription = await recharge.subscription.create({
+      //   address_id: +address_id,
+      //   charge_interval_frequency,
+      //   next_charge_scheduled_at,
+      //   order_interval_frequency,
+      //   order_interval_unit,
+      //   quantity: newQty,
+      //   shopify_variant_id: variantId,
+      //   price: newPrice,
+      // });
+
+      // console.log(newSubscription);
 
       sleep();
     } catch (error) {
-			console.log(`===============================`);
-			console.log(`Row #${i}`, customer_email);
-			console.log(error);
-			console.log(`===============================`);
-		}
+      console.log(`===============================`);
+      console.log(`Row #${i}`, customer_email);
+      console.log(error);
+      console.log(`===============================`);
+    }
   }
 };
 

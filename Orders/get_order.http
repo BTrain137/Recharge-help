@@ -1,0 +1,4 @@
+GET https://api.rechargeapps.com/orders/359014692
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}}
+Accept: application/json

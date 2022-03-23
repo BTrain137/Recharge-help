@@ -1,0 +1,21 @@
+POST https://api.rechargeapps.com/webhooks
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}},
+Accept: application/json
+
+{
+	"address": "https://7e4d-47-154-14-48.ngrok.io/webhook/hello-world",
+	"topic": "checkout/processed"
+}
+
+###
+# Needed to get first time orders
+POST https://api.rechargeapps.com/webhooks
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}}
+Accept: application/json
+
+{
+	"address": "https://7e4d-47-154-14-48.ngrok.io1/webhook/recharge/order-created",
+	"topic": "order/created"
+}

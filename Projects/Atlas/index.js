@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import Recharge from "recharge-api-node";
 import Shopify from "shopify-api-node";
 import neatCsv from "neat-csv";
+import consoleColor from "../../helpers/consoleColor.js";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ const shopify = new Shopify({
   password: SHOPIFY_PASSWORD,
 });
 
-const fileLocation = "./data/1beancounter_subscriptions_update.csv";
+const fileLocation = "./data/1jerrygee.csv";
 
 const sleep = (timeInSeconds = 500) => {
   return new Promise((resolve) => {
@@ -39,19 +40,18 @@ const main = async () => {
   const data = await readFile(new URL(fileLocation, import.meta.url));
   const csvArr = await neatCsv(data);
   let startNum = 0;
-  let endNum = 1;
+  let endNum = csvArr.length;
 
   for (let i = startNum; i < endNum; i++) {
     // console.log(`Row #${i}`, csvArr[i]);
 
     const row = csvArr[i];
-    const { subscription_id, properties, customer_email } = row;
+    const { subscription_id, customer_email, product_title } = row;
     const newProductId = +row["NEW Product ID"];
     const newQty = +row["NEW Quantity"];
     const newPrice = +row["NEW price"].replace("$", "");
 
     // console.log({ newProductId, newQty, newPrice, subscription_id });
-    // console.log(properties);
 
     try {
       const product = await shopify.product.get(newProductId);
@@ -95,26 +95,45 @@ const main = async () => {
 
       // console.log(nextChargeScheduledAt);
 
-      // const newSubscription = await recharge.subscription.create({
-      //   address_id: +address_id,
-      //   charge_interval_frequency,
-      //   next_charge_scheduled_at,
-      //   order_interval_frequency,
-      //   order_interval_unit,
-      //   quantity: newQty,
-      //   shopify_variant_id: variantId,
-      //   price: newPrice,
-      // });
+      const newSubscription = await recharge.subscription.create({
+        address_id: +address_id,
+        charge_interval_frequency,
+        next_charge_scheduled_at,
+        order_interval_frequency,
+        order_interval_unit,
+        quantity: newQty,
+        shopify_variant_id: variantId,
+        price: newPrice,
+      });
 
       // console.log(newSubscription);
-
+      consoleColor(newSubscription.id, "===== Subscription Created ======");
+      consoleColor(
+        newSubscription.id,
+        `${customer_email} ${newSubscription.product_title}`
+      );
       sleep();
     } catch (error) {
       console.log(`===============================`);
+      console.log("======== Add Subscription ==========");
       console.log(`Row #${i}`, customer_email);
       console.log(error);
       console.log(`===============================`);
     }
+
+    try {
+      const result = await recharge.subscription.delete(subscription_id);
+      consoleColor(subscription_id, "===== Subscription Deleted ======");
+      consoleColor(subscription_id, `${customer_email} ${product_title}`);
+    } catch (error) {
+      console.log(`===============================`);
+      console.log("======== Remove Subscription ==========");
+      console.log(`Row #${i}`, customer_email);
+      console.log(error);
+      console.log(`===============================`);
+    }
+
+    console.log(`\n\n`);
   }
 };
 

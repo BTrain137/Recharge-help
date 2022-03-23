@@ -1,0 +1,18 @@
+DELETE https://api.rechargeapps.com/subscriptions/228290375
+X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}}
+
+###
+POST https://api.rechargeapps.com/subscriptions
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}}
+
+{
+  "address_id": 87966906,
+  "charge_interval_frequency": 30,
+  "next_charge_scheduled_at": "2022-04-20T00:00:00",
+  "order_interval_frequency": 30,
+  "order_interval_unit": "day",
+  "quantity": 1,
+  "shopify_variant_id": "39540065468518",
+  "price": 11.16
+}

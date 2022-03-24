@@ -1,4 +1,5 @@
 import { readFile, appendFile } from "fs/promises";
+import * as fs from 'fs';
 import dotenv from "dotenv";
 import Recharge from "recharge-api-node";
 import Shopify from "shopify-api-node";
@@ -29,7 +30,7 @@ const shopify = new Shopify({
 const fileLocation =
   "./data/Production/New_Website_Updated_Subs_31822_BLANK_CXLD.csv";
 
-const sleep = (timeInSeconds = 500) => {
+const sleep = (timeInSeconds = 50) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
@@ -58,21 +59,168 @@ const test_data_match = async () => {
   return test_customer;
 };
 
+const approvedVarID = [
+  39543463510118, 39543255335014, 39540055310438, 39540052164710,
+  39540065468518,
+];
+
+const addNewSubscription = async (
+  customer_email,
+  row,
+  addressId,
+  subscription_id,
+  newProductId,
+  newProductTitle,
+  newQty,
+  newPrice,
+  i
+) => {
+  try {
+    try {
+      const product = await shopify.product.get(newProductId);
+      const { variants } = product;
+      const variantId = variants[0].id;
+      global.variantId = variantId;
+    } catch (error) {
+      const products = await shopify.product.list({
+        title: newProductTitle,
+      });
+      if (products.length > 1) {
+        console.log(products);
+      }
+      const { variants } = products[0];
+      const variantId = variants[0].id;
+      global.variantId = variantId;
+    }
+
+    // console.log(product.id);
+    // console.log(global.variantId);
+
+    const subscription = await recharge.subscription.get(subscription_id);
+    // console.log(subscription);
+
+    const {
+      address_id,
+      charge_interval_frequency,
+      next_charge_scheduled_at,
+      order_interval_frequency,
+      order_interval_unit,
+      status,
+    } = subscription;
+
+    // console.log({
+    //   address_id: +address_id,
+    //   charge_interval_frequency,
+    //   next_charge_scheduled_at,
+    //   order_interval_frequency,
+    //   order_interval_unit,
+    //   quantity: newQty,
+    //   shopify_variant_id: variantId,
+    //   price: newPrice,
+    // });
+
+    if (status === "CANCELLED") {
+      consoleColor(subscription.id, "===== Canceled Since ======");
+      consoleColor(
+        subscription.id,
+        `Row #${i} ${customer_email} ${subscription.product_title}`
+      );
+    } else {
+      if (!next_charge_scheduled_at) {
+        consoleColor(
+          subscription.id,
+          `Row #${i} ${customer_email} ${subscription.product_title}`
+        );
+        console.log(
+          "next_charge_scheduled_at is Null ========================================================="
+        );
+      }
+      const endOfWeekDate = new Date("2022-03-28T00:00:00");
+      let nextChargeScheduledAt = new Date(next_charge_scheduled_at);
+      if (endOfWeekDate > nextChargeScheduledAt) {
+        nextChargeScheduledAt.setDate(nextChargeScheduledAt.getDate() + 7);
+      }
+
+      nextChargeScheduledAt = `${nextChargeScheduledAt.getFullYear()}-${pad(
+        nextChargeScheduledAt.getMonth() + 1
+      )}-${pad(nextChargeScheduledAt.getDate())}T00:00:00`;
+
+      // console.log(nextChargeScheduledAt);
+
+      const newSubscription = await recharge.subscription.create({
+        address_id: +address_id,
+        charge_interval_frequency,
+        next_charge_scheduled_at: nextChargeScheduledAt,
+        order_interval_frequency,
+        order_interval_unit,
+        quantity: newQty,
+        shopify_variant_id: variantId,
+        price: newPrice,
+      });
+
+      // console.log(newSubscription);
+      consoleColor(newSubscription.id, "===== Subscription Created ======");
+      consoleColor(
+        newSubscription.id,
+        `Row #${i} ${customer_email} ${newSubscription.product_title}`
+      );
+    }
+  } catch (error) {
+    const subscriptions = await recharge.subscription.list({
+      address_id: addressId,
+    });
+    if (subscriptions.length) {
+      const [correctItem] = subscriptions.filter(
+        (subscription) => subscription.shopify_variant_id == global.variantId
+      );
+      if (correctItem) {
+        console.log("====================================");
+        console.log("===========  Skip  ============");
+        consoleColor(
+          correctItem.id,
+          `Row #${i} ${customer_email} ${correctItem.product_title}`
+        );
+        console.log("====================================");
+        global.removeSubscription = false;
+        return;
+      }
+    }
+    else {
+      return;
+    }
+
+    delete row["properties"];
+    let csvRow = Object.values(row).join(",");
+    csvRow += `,"${JSON.stringify(error.response.body.errors)}"`;
+    csvRow += "\n";
+    await appendFile(
+      new URL("./data/Production/error_logs_create.csv", import.meta.url),
+      csvRow
+    );
+
+    console.log(`===============================`);
+    console.log("======== Add Subscription ==========");
+    console.log(`Row #${i}`, customer_email);
+    console.log(error?.response?.body.errors);
+    console.log(`++++++++++++++++`);
+    console.log(error);
+    console.log(`===============================`);
+    global.removeSubscription = false;
+  }
+};
+
 const main = async () => {
   const test_data = await test_data_match();
   const data = await readFile(new URL(fileLocation, import.meta.url));
   const csvArr = await neatCsv(data);
   let endNum = csvArr.length;
-  let startNum = 792;
-  let totalNumCreated = 9;
-  let totalNumRemoved = 90;
-  let totalHasCanceledSince = 2;
+  let startNum = 3918;
 
   for (let i = startNum; i < endNum; i++) {
     // console.log(`Row #${i}`, csvArr[i]);
 
     const row = csvArr[i];
-    const { customer_email, product_title } = row;
+    const { customer_email, product_title, address_id: addressId } = row;
     const subscription_id = row["﻿subscription_id"];
     const newProductId = +row["NEW Product ID"];
     const newProductTitle = row["NEW Product Title"];
@@ -88,150 +236,72 @@ const main = async () => {
     global.removeSubscription = true;
 
     if (newProductId) {
-      try {
-        try {
-          const product = await shopify.product.get(newProductId);
-          const { variants } = product;
-          const variantId = variants[0].id;
-          global.variantId = variantId;
-        } catch (error) {
-          const products = await shopify.product.list({
-            title: newProductTitle,
-          });
-          if (products.length > 1) {
-            console.log(products);
-          }
-          const { variants } = products[0];
-          const variantId = variants[0].id;
-          global.variantId = variantId;
-        }
-
-        // console.log(product.id);
-        // console.log(global.variantId);
-
-        const subscription = await recharge.subscription.get(subscription_id);
-        // console.log(subscription);
-
-        const {
-          address_id,
-          charge_interval_frequency,
-          next_charge_scheduled_at,
-          order_interval_frequency,
-          order_interval_unit,
-          status,
-        } = subscription;
-
-        // console.log({
-        //   address_id: +address_id,
-        //   charge_interval_frequency,
-        //   next_charge_scheduled_at,
-        //   order_interval_frequency,
-        //   order_interval_unit,
-        //   quantity: newQty,
-        //   shopify_variant_id: variantId,
-        //   price: newPrice,
-        // });
-
-        if (status === "CANCELLED") {
-          totalHasCanceledSince += 1;
-          consoleColor(subscription.id, "===== Canceled Since ======");
-          consoleColor(
-            subscription.id,
-            `Row #${i} ${customer_email} ${subscription.product_title} - Total Created - ${totalHasCanceledSince}`
-          );
-        } else {
-          const endOfWeekDate = new Date("2022-03-28T00:00:00");
-          let nextChargeScheduledAt = new Date(next_charge_scheduled_at);
-          if (endOfWeekDate > nextChargeScheduledAt) {
-            nextChargeScheduledAt.setDate(nextChargeScheduledAt.getDate() + 7);
-          }
-
-          nextChargeScheduledAt = `${nextChargeScheduledAt.getFullYear()}-${pad(
-            nextChargeScheduledAt.getMonth() + 1
-          )}-${pad(nextChargeScheduledAt.getDate())}T00:00:00`;
-
-          // console.log(nextChargeScheduledAt);
-
-          const newSubscription = await recharge.subscription.create({
-            address_id: +address_id,
-            charge_interval_frequency,
-            next_charge_scheduled_at: nextChargeScheduledAt,
-            order_interval_frequency,
-            order_interval_unit,
-            quantity: newQty,
-            shopify_variant_id: variantId,
-            price: newPrice,
-          });
-
-          // console.log(newSubscription);
-          totalNumCreated += 1;
-          consoleColor(newSubscription.id, "===== Subscription Created ======");
-          consoleColor(
-            newSubscription.id,
-            `Row #${i} ${customer_email} ${newSubscription.product_title} - Total Created - ${totalNumCreated}`
-          );
-          sleep();
-        }
-      } catch (error) {
-        delete row["properties"];
-        let csvRow = Object.values(row).join(",");
-        csvRow += `,"${JSON.stringify(error.response.body.errors)}"`;
-        csvRow += "\n";
-        await appendFile(
-          new URL("./data/Production/error_logs_create.csv", import.meta.url),
-          csvRow
-        );
-
-        console.log(`===============================`);
-        console.log("======== Add Subscription ==========");
-        console.log(`Row #${i}`, customer_email);
-        console.log(error?.response?.body.errors);
-        console.log(`++++++++++++++++`);
-        console.log(error);
-        console.log(`===============================`);
-        console.log({
-          startNum,
-          totalNumCreated,
-          totalNumRemoved,
-          totalHasCanceledSince,
-        });
-        global.removeSubscription = false;
-      }
+      await addNewSubscription(
+        customer_email,
+        row,
+        addressId,
+        subscription_id,
+        newProductId,
+        newProductTitle,
+        newQty,
+        newPrice,
+        i
+      );
     }
 
     if (global.removeSubscription) {
       try {
         const result = await recharge.subscription.delete(subscription_id);
-        totalNumRemoved += 1;
         consoleColor(subscription_id, "===== Subscription Deleted ======");
         consoleColor(
           subscription_id,
-          `Row #${i} ${customer_email} ${product_title} - Total Removed: ${totalNumRemoved}`
+          `Row #${i} ${customer_email} ${product_title}`
         );
       } catch (error) {
-        delete row["properties"];
-        let csvRow = Object.values(row).join(",");
-        csvRow += "\n";
-        await appendFile(
-          new URL("./data/Production/error_logs_delete.csv", import.meta.url),
-          csvRow
-        );
-
-        console.log(`===============================`);
-        console.log("======== Remove Subscription ==========");
-        console.log(`Row #${i}`, customer_email);
-        console.log(error);
-        console.log(`===============================`);
-        console.log({
-          startNum,
-          totalNumCreated,
-          totalNumRemoved,
-          totalHasCanceledSince,
+        const subscriptions = await recharge.subscription.list({
+          address_id: addressId,
         });
+        const [correctItem] = subscriptions.filter((subscription) =>
+          approvedVarID.includes(subscription.shopify_variant_id)
+        );
+        if (correctItem) {
+          console.log(`==============================`);
+          console.log(`Row #${i}`, customer_email);
+          console.log("Skip No Subscriptions Delete");
+          console.log(`===============================`);
+        } else {
+          if (subscriptions.length) {
+            delete row["properties"];
+            let csvRow = Object.values(row).join(",");
+            csvRow += `,"${JSON.stringify(
+              error.response.body.error || error.response.body.errors
+            )}"`;
+            csvRow += "\n";
+            appendFile(
+              new URL(
+                "./data/Production/error_logs_delete.csv",
+                import.meta.url
+              ),
+              csvRow
+            );
+
+            console.log(`===============================`);
+            console.log("======== Remove Subscription ==========");
+            console.log(`Row #${i}`, customer_email);
+            console.log(error);
+            console.log(`===============================`);
+          } else {
+            console.log(`==============================`);
+            console.log(`Row #${i}`, customer_email);
+            console.log("No Subscriptions");
+            console.log(`===============================`);
+          }
+        }
       }
     }
 
     console.log(`\n`);
+    fs.writeFileSync(new URL("./data/Production/track.txt", import.meta.url), i.toString())
   }
 
   console.log("Completed!!");

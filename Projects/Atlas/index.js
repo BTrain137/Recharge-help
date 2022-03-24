@@ -26,7 +26,7 @@ const shopify = new Shopify({
   password: SHOPIFY_PASSWORD,
 });
 
-const fileLocation = "./data/1jerrygee.csv";
+const fileLocation = "./data/Production/New_Website_Updated_Subs_31822_BLANK_CXLD.csv";
 
 const sleep = (timeInSeconds = 500) => {
   return new Promise((resolve) => {
@@ -36,7 +36,20 @@ const sleep = (timeInSeconds = 500) => {
   });
 };
 
+const test_data_match = async () => {
+	const data = await readFile(new URL("./data/test_data/TEST_New_Website_Updated Subs_31822_BLANK CXLD.csv", import.meta.url));
+  const csvArr = await neatCsv(data);
+	const test_customer = csvArr.reduce((acc, row) => {
+		if(!acc[row.customer_email]) {
+			acc[row.customer_email] = 1;
+		}
+		return acc;
+	}, {});
+	return test_customer;
+}
+
 const main = async () => {
+	const test_data = await test_data_match();
   const data = await readFile(new URL(fileLocation, import.meta.url));
   const csvArr = await neatCsv(data);
   let startNum = 0;
@@ -51,6 +64,10 @@ const main = async () => {
     const newProductTitle = row["NEW Product Title"];
     const newQty = +row["NEW Quantity"];
     const newPrice = +row["NEW price"].replace("$", "");
+
+		if(test_data[customer_email]) {
+			continue;
+		}
 
     // console.log({ newProductId, newQty, newPrice, subscription_id });
 
@@ -76,7 +93,7 @@ const main = async () => {
         }
 
         // console.log(product.id);
-        console.log(global.variantId);
+        // console.log(global.variantId);
 
         const subscription = await recharge.subscription.get(subscription_id);
         // console.log(subscription);
@@ -156,6 +173,13 @@ const main = async () => {
 
     console.log(`\n`);
   }
+
+  console.log("Completed!!");
 };
 
-main();
+// main();
+(async function test() {
+	const result = await test_data_match();
+  console.log(result['24601pk@gmail.com']);
+  console.log(result['bryan89tran@yahoo.com']);
+})();

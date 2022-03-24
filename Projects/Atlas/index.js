@@ -1,4 +1,4 @@
-import { readFile } from "fs/promises";
+import { readFile, appendFile } from "fs/promises";
 import dotenv from "dotenv";
 import Recharge from "recharge-api-node";
 import Shopify from "shopify-api-node";
@@ -37,19 +37,19 @@ const sleep = (timeInSeconds = 500) => {
 };
 
 const test_data_match = async () => {
-	const data = await readFile(new URL("./data/test_data/TEST_New_Website_Updated Subs_31822_BLANK CXLD.csv", import.meta.url));
+  const data = await readFile(new URL("./data/test_data/TEST_New_Website_Updated Subs_31822_BLANK CXLD.csv", import.meta.url));
   const csvArr = await neatCsv(data);
-	const test_customer = csvArr.reduce((acc, row) => {
-		if(!acc[row.customer_email]) {
-			acc[row.customer_email] = 1;
-		}
-		return acc;
-	}, {});
-	return test_customer;
+  const test_customer = csvArr.reduce((acc, row) => {
+    if(!acc[row.customer_email]) {
+      acc[row.customer_email] = 1;
+    }
+    return acc;
+  }, {});
+  return test_customer;
 }
 
 const main = async () => {
-	const test_data = await test_data_match();
+  const test_data = await test_data_match();
   const data = await readFile(new URL(fileLocation, import.meta.url));
   const csvArr = await neatCsv(data);
   let startNum = 0;
@@ -65,9 +65,9 @@ const main = async () => {
     const newQty = +row["NEW Quantity"];
     const newPrice = +row["NEW price"].replace("$", "");
 
-		if(test_data[customer_email]) {
-			continue;
-		}
+    if(test_data[customer_email]) {
+      continue;
+    }
 
     // console.log({ newProductId, newQty, newPrice, subscription_id });
 
@@ -148,6 +148,11 @@ const main = async () => {
         );
         sleep();
       } catch (error) {
+        delete row["properties"];
+        let csvRow = Object.values(row).join(",");
+        csvRow += "\n";
+        await appendFile(new URL("./data/Production/error_logs_create.csv", import.meta.url), csvRow);
+
         console.log(`===============================`);
         console.log("======== Add Subscription ==========");
         console.log(`Row #${i}`, customer_email);
@@ -163,6 +168,11 @@ const main = async () => {
         consoleColor(subscription_id, "===== Subscription Deleted ======");
         consoleColor(subscription_id, `${customer_email} ${product_title}`);
       } catch (error) {
+        delete row["properties"];
+        let csvRow = Object.values(row).join(",");
+        csvRow += "\n";
+        await appendFile(new URL("./data/Production/error_logs_delete.csv", import.meta.url), csvRow);
+
         console.log(`===============================`);
         console.log("======== Remove Subscription ==========");
         console.log(`Row #${i}`, customer_email);
@@ -177,9 +187,9 @@ const main = async () => {
   console.log("Completed!!");
 };
 
-// main();
-(async function test() {
-	const result = await test_data_match();
-  console.log(result['24601pk@gmail.com']);
-  console.log(result['bryan89tran@yahoo.com']);
-})();
+main();
+// (async function test() {
+// 	const result = await test_data_match();
+//   console.log(result['24601pk@gmail.com']);
+//   console.log(result['bryan89tran@yahoo.com']);
+// })();

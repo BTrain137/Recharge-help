@@ -26,7 +26,8 @@ const shopify = new Shopify({
   password: SHOPIFY_PASSWORD,
 });
 
-const fileLocation = "./data/Production/New_Website_Updated_Subs_31822_BLANK_CXLD.csv";
+const fileLocation =
+  "./data/Production/New_Website_Updated_Subs_31822_BLANK_CXLD.csv";
 
 const sleep = (timeInSeconds = 500) => {
   return new Promise((resolve) => {
@@ -36,36 +37,46 @@ const sleep = (timeInSeconds = 500) => {
   });
 };
 
+const pad = (n) => {
+  return n < 10 ? "0" + n : n;
+};
+
 const test_data_match = async () => {
-  const data = await readFile(new URL("./data/test_data/TEST_New_Website_Updated Subs_31822_BLANK CXLD.csv", import.meta.url));
+  const data = await readFile(
+    new URL(
+      "./data/test_data/TEST_New_Website_Updated Subs_31822_BLANK CXLD.csv",
+      import.meta.url
+    )
+  );
   const csvArr = await neatCsv(data);
   const test_customer = csvArr.reduce((acc, row) => {
-    if(!acc[row.customer_email]) {
+    if (!acc[row.customer_email]) {
       acc[row.customer_email] = 1;
     }
     return acc;
   }, {});
   return test_customer;
-}
+};
 
 const main = async () => {
   const test_data = await test_data_match();
   const data = await readFile(new URL(fileLocation, import.meta.url));
   const csvArr = await neatCsv(data);
-  let startNum = 0;
+  let startNum = 42;
   let endNum = csvArr.length;
 
   for (let i = startNum; i < endNum; i++) {
     // console.log(`Row #${i}`, csvArr[i]);
 
     const row = csvArr[i];
-    const { subscription_id, customer_email, product_title } = row;
+    const { customer_email, product_title } = row;
+    const subscription_id = row["﻿subscription_id"];
     const newProductId = +row["NEW Product ID"];
     const newProductTitle = row["NEW Product Title"];
     const newQty = +row["NEW Quantity"];
     const newPrice = +row["NEW price"].replace("$", "");
 
-    if(test_data[customer_email]) {
+    if (test_data[customer_email]) {
       continue;
     }
 
@@ -124,15 +135,15 @@ const main = async () => {
         }
 
         nextChargeScheduledAt = `${nextChargeScheduledAt.getFullYear()}-${
-          nextChargeScheduledAt.getMonth() + 1
-        }-${nextChargeScheduledAt.getDate()}T00:00:00`;
+          pad(nextChargeScheduledAt.getMonth() + 1)
+        }-${pad(nextChargeScheduledAt.getDate())}T00:00:00`;
 
         // console.log(nextChargeScheduledAt);
 
         const newSubscription = await recharge.subscription.create({
           address_id: +address_id,
           charge_interval_frequency,
-          next_charge_scheduled_at,
+          next_charge_scheduled_at: nextChargeScheduledAt,
           order_interval_frequency,
           order_interval_unit,
           quantity: newQty,
@@ -144,14 +155,17 @@ const main = async () => {
         consoleColor(newSubscription.id, "===== Subscription Created ======");
         consoleColor(
           newSubscription.id,
-          `${customer_email} ${newSubscription.product_title}`
+          `Row #${i} ${customer_email} ${newSubscription.product_title}`
         );
         sleep();
       } catch (error) {
         delete row["properties"];
         let csvRow = Object.values(row).join(",");
         csvRow += "\n";
-        await appendFile(new URL("./data/Production/error_logs_create.csv", import.meta.url), csvRow);
+        await appendFile(
+          new URL("./data/Production/error_logs_create.csv", import.meta.url),
+          csvRow
+        );
 
         console.log(`===============================`);
         console.log("======== Add Subscription ==========");
@@ -166,12 +180,15 @@ const main = async () => {
       try {
         const result = await recharge.subscription.delete(subscription_id);
         consoleColor(subscription_id, "===== Subscription Deleted ======");
-        consoleColor(subscription_id, `${customer_email} ${product_title}`);
+        consoleColor(subscription_id, `Row #${i} ${customer_email} ${product_title}`);
       } catch (error) {
         delete row["properties"];
         let csvRow = Object.values(row).join(",");
         csvRow += "\n";
-        await appendFile(new URL("./data/Production/error_logs_delete.csv", import.meta.url), csvRow);
+        await appendFile(
+          new URL("./data/Production/error_logs_delete.csv", import.meta.url),
+          csvRow
+        );
 
         console.log(`===============================`);
         console.log("======== Remove Subscription ==========");

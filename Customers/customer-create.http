@@ -1,0 +1,10 @@
+POST https://api.rechargeapps.com/customers
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$processEnv RECHARGE_TOKEN}}
+
+{
+  "first_name": "Niels",
+  "last_name": "Bohr",
+  "email": "fake@example.com"
+}

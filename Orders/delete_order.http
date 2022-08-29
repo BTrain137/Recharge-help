@@ -1,0 +1,3 @@
+DELETE https://api.rechargeapps.com/orders/70071255/{{$dotenv ORDER_ID}}
+X-Recharge-Version: 2021-11
+X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}}

@@ -1,0 +1,8 @@
+PUT https://api.rechargeapps.com/subscriptions/{{$dotenv SUBSCRIPTION_ID}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+{
+	"next_charge_scheduled_at": "2022-09-08"
+}

@@ -1,0 +1,4 @@
+GET https://api.rechargeapps.com/subscriptions?customer_id={{$dotenv CUSTOMER_ID}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

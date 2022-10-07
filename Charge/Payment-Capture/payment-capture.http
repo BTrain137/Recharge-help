@@ -1,0 +1,5 @@
+POST https://api.rechargeapps.com/charges/{{$dotenv CHARGE_ID}}/capture_payment
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+{}

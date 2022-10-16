@@ -1,4 +1,4 @@
-POST https://api.rechargeapps.com/customers/{{$dotenv CUSTOMER_ID }}
+DELETE https://api.rechargeapps.com/customers/{{$dotenv CUSTOMER_ID }}
 X-Recharge-Version: 2021-11
 Content-Type: application/json
 X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

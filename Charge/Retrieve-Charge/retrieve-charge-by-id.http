@@ -1,0 +1,3 @@
+GET https://api.rechargeapps.com/charges/{{$dotenv RECHARGE_CHARGE_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

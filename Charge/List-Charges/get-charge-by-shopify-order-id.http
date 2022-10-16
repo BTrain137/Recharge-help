@@ -1,3 +1,34 @@
-GET https://api.rechargeapps.com/charges/charges?external_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+###
+# Warning: Is in the documentation but DOESN'T WORK
+# WILL RETURN EVERY ORDER IN RECHAGE
+GET https://api.rechargeapps.com/charges?external_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by shopify order id
+# WARNING: is not in the documentation
+GET https://api.rechargeapps.com/charges?shopify_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by recharge customer ID
+# Will return ALL charges for this customers
+GET https://api.rechargeapps.com/charges?customer_id={{$dotenv RECHARGE_CUSTOMER_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by recharge customer ID and Shopify order id
+# WARNING: is not in the documentation
+GET https://api.rechargeapps.com/charges?customer_id={{$dotenv RECHARGE_CUSTOMER_ID}}&shopify_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by customer id and status is pending
+# Most likely the most stable call. Chaining
+GET https://api.rechargeapps.com/charges?customer_id={{$dotenv RECHARGE_CUSTOMER_ID}}&status=PENDING
 Content-Type: application/json
 X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

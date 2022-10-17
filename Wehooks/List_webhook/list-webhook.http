@@ -1,0 +1,5 @@
+GET https://api.rechargeapps.com/webhooks
+X-Recharge-Version: 2021-11
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+Content-Type: application/json
+Accept: application/json

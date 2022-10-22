@@ -19,3 +19,15 @@ Accept: application/json
 	"address": "https://7e4d-47-154-14-48.ngrok.io1/webhook/recharge/order-created",
 	"topic": "order/created"
 }
+
+###
+# 
+POST https://api.rechargeapps.com/webhooks
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+Accept: application/json
+
+{
+	"address": "https://webhook.site/eea7820d-38a2-411c-b70a-e69731576c86/webhook/recharge/charge/failed",
+	"topic": "charge/failed"
+}

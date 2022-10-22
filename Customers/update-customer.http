@@ -6,7 +6,7 @@ Content-Type: application/json
 X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
 
 {
-	"email": "santa_claus@candy_lane.com",
+	"email": "santa_claus@candylane.com",
 	"first_name":"Saint",
 	"last_name":"Nicolas",
 	"phone":"+18889999999"

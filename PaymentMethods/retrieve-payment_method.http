@@ -1,0 +1,6 @@
+###
+# Get One
+GET https://api.rechargeapps.com/payment_methods/{{$dotenv PAYMENT_METHOD_ID}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

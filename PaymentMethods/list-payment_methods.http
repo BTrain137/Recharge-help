@@ -1,0 +1,13 @@
+###
+# list by email
+GET https://api.rechargeapps.com/payment_methods?email={{$dotenv CUSTOMER_EMAIL}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# list by Customer ID
+GET https://api.rechargeapps.com/payment_methods?customer_id={{$dotenv CUSTOMER_ID}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

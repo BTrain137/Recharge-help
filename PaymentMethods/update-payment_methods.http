@@ -1,0 +1,21 @@
+###
+# Update
+PUT https://api.rechargeapps.com/payment_methods/{{$dotenv PAYMENT_METHOD_ID}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+{
+	"billing_address": {
+		"address1": "123 Washington Street",
+		"address2": "Suite 101",
+		"city": "Los Angeles",
+		"company": "Recharge",
+		"country_code": "US",
+		"first_name": "Jane",
+		"last_name": "Doe",
+		"phone": "1234567890",
+		"province": "California",
+		"zip": "90210"
+	}
+}

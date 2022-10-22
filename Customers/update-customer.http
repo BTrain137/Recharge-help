@@ -1,0 +1,13 @@
+###
+#
+PUT https://api.rechargeapps.com/customers/{{$dotenv CUSTOMER_ID}}
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+{
+	"email": "santa_claus@candy_lane.com",
+	"first_name":"Saint",
+	"last_name":"Nicolas",
+	"phone":"+18889999999"
+}

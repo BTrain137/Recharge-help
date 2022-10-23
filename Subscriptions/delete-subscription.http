@@ -1,0 +1,7 @@
+@subscription_id={{$dotenv SUBSCRIPTION_ID}}
+@recharge_token={{$dotenv RECHARGE_TOKEN}}
+
+###
+#
+DELETE https://api.rechargeapps.com/subscriptions/{{subscription_id}}
+X-Recharge-Access-Token: {{recharge_token}}

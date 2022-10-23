@@ -1,2 +1,0 @@
-DELETE https://api.rechargeapps.com/subscriptions/228290375
-X-Recharge-Access-Token: {{$dotenv RECHARGE_ACCESS_TOKEN}}

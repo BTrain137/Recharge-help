@@ -1,8 +1,0 @@
-@recharge_key=
-@address_id=
-
-###
-GET https://api.rechargeapps.com/addresses/{{address_id}}
-Accept: application/json
-Content-Type: application/json
-X-Recharge-Access-Token: {{recharge_key}}

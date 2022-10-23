@@ -1,0 +1,6 @@
+###
+#
+GET https://api.rechargeapps.com/addresses?customer_id={{$dotenv CUSTOMER_ID}}
+Accept: application/json
+Content-Type: application/json
+X-Recharge-Access-Token: X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

@@ -1,0 +1,14 @@
+@charge_id={{$dotenv CHARGE_ID}}
+@recharge_token={{$dotenv RECHARGE_TOKEN}}
+@subscription_ids=[{{$dotenv SUBSCRIPTION_ID}}]
+
+###
+# Get Charge by customer id and status is pending
+# Most likely the most stable call. Chaining
+POST https://api.rechargeapps.com/charges/{{charge_id}}/unskip
+Content-Type: application/json
+X-Recharge-Access-Token: {{recharge_token}}
+
+{
+  "subscription_ids": {{subscription_ids}}
+}

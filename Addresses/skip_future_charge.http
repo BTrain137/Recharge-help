@@ -5,12 +5,12 @@
 
 ###
 #
-POST https://api.rechargeapps.com/addresses/105557344/charges/skip
+POST https://api.rechargeapps.com/addresses/{{address_id}}/charges/skip
 Content-Type: application/json
 X-Recharge-Version: 2021-11
 X-Recharge-Access-Token: {{recharge_token}}
 
 {
-  "date": "2022-11-21",
-  "subscription_ids": [293384211]
+  "date": "{{date}}",
+  "subscription_ids": {{purchase_item_ids}}
 }

@@ -32,3 +32,10 @@ X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
 GET https://api.rechargeapps.com/charges?customer_id={{$dotenv RECHARGE_CUSTOMER_ID}}&status=PENDING
 Content-Type: application/json
 X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by customer id and status is pending
+# Most likely the most stable call. Chaining
+GET https://api.rechargeapps.com/charges?status=SKIPPED
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}

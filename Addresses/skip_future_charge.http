@@ -1,0 +1,16 @@
+@recharge_token={{$dotenv RECHARGE_TOKEN}}
+@address_id={{$dotenv ADDRESS_ID}}
+@purchase_item_ids=[293384211]
+@date=2022-11-21
+
+###
+#
+POST https://api.rechargeapps.com/addresses/105557344/charges/skip
+Content-Type: application/json
+X-Recharge-Version: 2021-11
+X-Recharge-Access-Token: {{recharge_token}}
+
+{
+  "date": "2022-11-21",
+  "subscription_ids": [293384211]
+}

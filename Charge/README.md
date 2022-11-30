@@ -14,5 +14,5 @@
   - After payment is captured then the charge should be `"status": "SUCCESS",`
 
 Note:
-  - `"status": "QUEUE",` charges are orders that haven't been dropped into shopify yet. 
+  - `"status": "QUEUED",` charges are orders that haven't been dropped into shopify yet. 
     - Usually the next up coming order (next up coming warehouse day)

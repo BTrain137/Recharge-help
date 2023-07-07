@@ -1,0 +1,15 @@
+
+@email=
+@token={{$dotenv STRIPE_AUTH}}
+
+###
+# Get customer by email
+GET https://api.stripe.com/v1/customers?email={{email}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+###
+# ALL customer
+GET https://api.stripe.com/v1/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json

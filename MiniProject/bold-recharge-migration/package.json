@@ -1,0 +1,25 @@
+{
+  "name": "bold-recharge-migration",
+  "version": "1.0.0",
+  "description": "Migration from Bold subscriptions to Recharge subscriptions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BTrain137/bold-recharge-migration.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BTrain137/bold-recharge-migration/issues"
+  },
+  "homepage": "https://github.com/BTrain137/bold-recharge-migration#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^8.2.0",
+    "neat-csv": "^6.0.1"
+  }
+}

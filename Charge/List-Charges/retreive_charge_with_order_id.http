@@ -1,0 +1,33 @@
+
+###
+# Get Charge by recharge customer ID and Shopify order id
+GET https://api.rechargeapps.com/charges?customer_id={{$dotenv RECHARGE_CUSTOMER_ID}}&external_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+Content-Type: application/json
+X-Recharge-Version: 2021-11
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+
+###
+# Get Charge by recharge customer ID and Shopify order id
+GET https://api.rechargeapps.com/charges?customer_id={{$dotenv RECHARGE_CUSTOMER_ID}}&shopify_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by shopify order id
+GET https://api.rechargeapps.com/charges?shopify_order_id={{$dotenv SHOPIFY_ORDER_ID}}&status=PENDING
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by shopify order id
+GET https://api.rechargeapps.com/charges?shopify_order_id={{$dotenv SHOPIFY_ORDER_ID}}
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
+
+###
+# Get Charge by shopify order id
+GET https://api.rechargeapps.com/charges?customer_id=100670578
+X-Recharge-Version: 2021-11
+Content-Type: application/json
+X-Recharge-Access-Token: {{$dotenv RECHARGE_TOKEN}}
